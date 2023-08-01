@@ -17,7 +17,7 @@ import java.util.Map;
  * @date 2023/7/29
  */
 @RestController
-@RequestMapping("/api/propt")
+@RequestMapping("/propt")
 public class PromptController {
 
     @Resource

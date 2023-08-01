@@ -18,7 +18,7 @@ import javax.annotation.Resource;
  * @date 2023/7/29
  */
 @RestController
-@RequestMapping("/api/ernie")
+@RequestMapping("/turbo")
 public class ErnieBotTurboController {
 
     @Resource

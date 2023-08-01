@@ -18,7 +18,7 @@ import javax.annotation.Resource;
  * @date 2023/7/29
  */
 @RestController
-@RequestMapping("/api/bloomz7b")
+@RequestMapping("/bloomz7b")
 public class Bloomz7BController {
 
     @Resource

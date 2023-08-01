@@ -18,7 +18,7 @@ import javax.annotation.Resource;
  * @date 2023/7/29
  */
 @RestController
-@RequestMapping("/api/turbo")
+@RequestMapping("/ernie")
 public class ErnieBotController {
 
     @Resource
@@ -65,7 +65,8 @@ public class ErnieBotController {
 
     // 连续对话
     @PostMapping("/param/chats")
-    public BaseResponse<ChatResponse> pChatCont(@RequestBody ChatErnieRequest chatErnieRequest, String chatUid) {
+    public BaseResponse<ChatResponse> pChatCont(@RequestBody ChatErnieRequest chatErnieRequest) {
+        String chatUid = "1001";
         ChatResponse response = ernieBotClient.chatCont(chatErnieRequest, chatUid);
         return BaseResponse.success(response);
     }
