@@ -1,8 +1,9 @@
 package com.wenxin.demo.controller;
 
-import com.gearwenxin.client.Bloomz7BClient;
-import com.gearwenxin.model.chatmodel.ChatTurbo7BRequest;
-import com.gearwenxin.model.response.ChatResponse;
+
+import com.gearwenxin.client.BloomZ7BClient;
+import com.gearwenxin.entity.chatmodel.ChatBloomZ7BRequest;
+import com.gearwenxin.entity.response.ChatResponse;
 import com.wenxin.demo.common.BaseResponse;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -13,16 +14,12 @@ import reactor.core.publisher.Flux;
 
 import javax.annotation.Resource;
 
-/**
- * @author Ge Mingjia
- * @date 2023/7/29
- */
 @RestController
 @RequestMapping("/bloomz7b")
-public class Bloomz7BController {
+public class BloomZ7BController {
 
     @Resource
-    private Bloomz7BClient bloomz7BClient;
+    private BloomZ7BClient bloomz7BClient;
 
     //------------------默认参数------------------//
 
@@ -42,46 +39,42 @@ public class Bloomz7BController {
 
     // 流式返回，单次对话
     @PostMapping(value = "/stream/chat", produces = MediaType.TEXT_EVENT_STREAM_VALUE)
-    public BaseResponse<Flux<ChatResponse>> chatSingleStream(String msg) {
-        Flux<ChatResponse> chatResponseFlux = bloomz7BClient.chatSingleOfStream(msg);
-        return BaseResponse.success(chatResponseFlux);
+    public Flux<ChatResponse> chatSingleStream(String msg) {
+        return bloomz7BClient.chatSingleOfStream(msg);
     }
 
     // 流式返回，连续对话
     @PostMapping(value = "/stream/chats", produces = MediaType.TEXT_EVENT_STREAM_VALUE)
-    public BaseResponse<Flux<ChatResponse>> chatContStream(String msg, String msgUid) {
-        Flux<ChatResponse> chatResponseFlux = bloomz7BClient.chatContOfStream(msg, msgUid);
-        return BaseResponse.success(chatResponseFlux);
+    public Flux<ChatResponse> chatContStream(String msg, String msgUid) {
+        return bloomz7BClient.chatContOfStream(msg, msgUid);
     }
 
     //------------------自定义参数------------------//
 
     // 模板对话
     @PostMapping("/param/chat")
-    public BaseResponse<ChatResponse> pChatSingle(@RequestBody ChatTurbo7BRequest chatTurbo7BRequest) {
+    public BaseResponse<ChatResponse> pChatSingle(@RequestBody ChatBloomZ7BRequest chatTurbo7BRequest) {
         ChatResponse chatResponse = bloomz7BClient.chatSingle(chatTurbo7BRequest);
         return BaseResponse.success(chatResponse);
     }
 
     // 连续对话
     @PostMapping("/param/chats")
-    public BaseResponse<ChatResponse> pChatCont(@RequestBody ChatTurbo7BRequest chatTurbo7BRequest, String chatUid) {
+    public BaseResponse<ChatResponse> pChatCont(@RequestBody ChatBloomZ7BRequest chatTurbo7BRequest, String chatUid) {
         ChatResponse response = bloomz7BClient.chatCont(chatTurbo7BRequest, chatUid);
         return BaseResponse.success(response);
     }
 
     // 流式返回，单次对话
     @PostMapping(value = "/param/stream/chat", produces = MediaType.TEXT_EVENT_STREAM_VALUE)
-    public BaseResponse<Flux<ChatResponse>> pChatSingleStream(@RequestBody ChatTurbo7BRequest chatTurbo7BRequest) {
-        Flux<ChatResponse> chatResponseFlux = bloomz7BClient.chatSingleOfStream(chatTurbo7BRequest);
-        return BaseResponse.success(chatResponseFlux);
+    public Flux<ChatResponse> pChatSingleStream(@RequestBody ChatBloomZ7BRequest chatTurbo7BRequest) {
+        return bloomz7BClient.chatSingleOfStream(chatTurbo7BRequest);
     }
 
     // 流式返回，连续对话
     @PostMapping(value = "/param/stream/chats", produces = MediaType.TEXT_EVENT_STREAM_VALUE)
-    public BaseResponse<Flux<ChatResponse>> pChatContStream(@RequestBody ChatTurbo7BRequest chatTurbo7BRequest, String msgUid) {
-        Flux<ChatResponse> chatResponseFlux = bloomz7BClient.chatContOfStream(chatTurbo7BRequest, msgUid);
-        return BaseResponse.success(chatResponseFlux);
+    public Flux<ChatResponse> pChatContStream(@RequestBody ChatBloomZ7BRequest chatTurbo7BRequest, String msgUid) {
+        return bloomz7BClient.chatContOfStream(chatTurbo7BRequest, msgUid);
     }
 
 }

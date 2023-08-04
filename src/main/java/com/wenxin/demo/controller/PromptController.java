@@ -1,8 +1,9 @@
 package com.wenxin.demo.controller;
 
-import com.gearwenxin.client.PromptClient;
-import com.gearwenxin.model.chatmodel.ChatPromptRequest;
-import com.gearwenxin.model.response.PromptResponse;
+
+import com.gearwenxin.client.PromptBotClient;
+import com.gearwenxin.entity.chatmodel.ChatPromptRequest;
+import com.gearwenxin.entity.response.PromptResponse;
 import com.wenxin.demo.common.BaseResponse;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -21,7 +22,7 @@ import java.util.Map;
 public class PromptController {
 
     @Resource
-    private PromptClient promptClient;
+    private PromptBotClient promptClient;
 
     // 模板对话
     @PostMapping
