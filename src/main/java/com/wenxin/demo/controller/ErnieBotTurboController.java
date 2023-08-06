@@ -1,16 +1,11 @@
 package com.wenxin.demo.controller;
 
-import com.gearwenxin.client.ErnieBotTurboClient;
-
-
+import com.gearwenxin.client.ernie.ErnieBotTurboClient;
 import com.gearwenxin.entity.chatmodel.ChatBaseRequest;
 import com.gearwenxin.entity.response.ChatResponse;
 import com.wenxin.demo.common.BaseResponse;
 import org.springframework.http.MediaType;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import reactor.core.publisher.Flux;
 
 import javax.annotation.Resource;
@@ -27,30 +22,33 @@ public class ErnieBotTurboController {
     private ErnieBotTurboClient ernieBotTurboClient;
 
     //------------------默认参数------------------//
-
+    @GetMapping
+    public BaseResponse<ChatResponse> get() {
+        return BaseResponse.success(null);
+    }
     // 单轮对话
     @PostMapping("/chat")
-    public BaseResponse<ChatResponse> chatSingle(String content) {
+    public BaseResponse<ChatResponse> chatSingle(@RequestBody String content) {
         ChatResponse chatResponse = ernieBotTurboClient.chatSingle(content);
         return BaseResponse.success(chatResponse);
     }
 
     // 连续对话
     @PostMapping("/chats")
-    public BaseResponse<ChatResponse> chatCont(String msg, String msgUid) {
+    public BaseResponse<ChatResponse> chatCont(@RequestBody String msg, @RequestBody String msgUid) {
         ChatResponse response = ernieBotTurboClient.chatCont(msg, msgUid);
         return BaseResponse.success(response);
     }
 
     // 流式返回，单次对话
     @PostMapping(value = "/stream/chat", produces = MediaType.TEXT_EVENT_STREAM_VALUE)
-    public Flux<ChatResponse> chatSingleStream(String msg) {
+    public Flux<ChatResponse> chatSingleStream(@RequestBody String msg) {
         return ernieBotTurboClient.chatSingleOfStream(msg);
     }
 
     // 流式返回，连续对话
     @PostMapping(value = "/stream/chats", produces = MediaType.TEXT_EVENT_STREAM_VALUE)
-    public Flux<ChatResponse> chatContStream(String msg, String msgUid) {
+    public Flux<ChatResponse> chatContStream(@RequestBody String msg, @RequestBody String msgUid) {
         return ernieBotTurboClient.chatContOfStream(msg, msgUid);
     }
 

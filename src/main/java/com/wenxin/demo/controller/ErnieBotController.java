@@ -1,15 +1,11 @@
 package com.wenxin.demo.controller;
 
-import com.gearwenxin.client.ErnieBotClient;
-
+import com.gearwenxin.client.ernie.ErnieBotClient;
 import com.gearwenxin.entity.chatmodel.ChatErnieRequest;
 import com.gearwenxin.entity.response.ChatResponse;
 import com.wenxin.demo.common.BaseResponse;
 import org.springframework.http.MediaType;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import reactor.core.publisher.Flux;
 
 import javax.annotation.Resource;
@@ -29,28 +25,31 @@ public class ErnieBotController {
 
     // 单轮对话
     @PostMapping("/chat")
-    public BaseResponse<ChatResponse> chatSingle(String content) {
+    public BaseResponse<ChatResponse> chatSingle(@RequestBody String content) {
         ChatResponse chatResponse = ernieBotClient.chatSingle(content);
         return BaseResponse.success(chatResponse);
     }
-
+    @GetMapping
+    public BaseResponse<ChatResponse> get() {
+        return BaseResponse.success(null);
+    }
     // 连续对话
     @PostMapping("/chats")
-    public BaseResponse<ChatResponse> chatCont(String msg, String chatUid) {
+    public BaseResponse<ChatResponse> chatCont(@RequestBody String msg,@RequestBody  String chatUid) {
         ChatResponse response = ernieBotClient.chatCont(msg, chatUid);
         return BaseResponse.success(response);
     }
 
     // 流式返回，单次对话
     @PostMapping(value = "/stream/chat", produces = MediaType.TEXT_EVENT_STREAM_VALUE)
-    public Flux<ChatResponse> chatSingleStream(String msg) {
+    public Flux<ChatResponse> chatSingleStream(@RequestBody String msg) {
         Flux<ChatResponse> chatResponseFlux = ernieBotClient.chatSingleOfStream(msg);
         return chatResponseFlux;
     }
 
     // 流式返回，连续对话
     @PostMapping(value = "/stream/chats", produces = MediaType.TEXT_EVENT_STREAM_VALUE)
-    public Flux<ChatResponse> chatContStream(String msg, String msgUid) {
+    public Flux<ChatResponse> chatContStream(@RequestBody String msg, @RequestBody String msgUid) {
         Flux<ChatResponse> chatResponseFlux = ernieBotClient.chatContOfStream(msg, msgUid);
         return chatResponseFlux;
     }
