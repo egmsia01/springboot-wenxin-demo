@@ -22,8 +22,8 @@ public class BloomZ7BController {
 
     // 单轮对话
     @PostMapping("/chat")
-    public BaseResponse<ChatResponse> chatSingle(@RequestBody String content) {
-        ChatResponse chatResponse = bloomz7BClient.chatSingle(content);
+    public BaseResponse<ChatResponse> chatSingle(String msg) {
+        ChatResponse chatResponse = bloomz7BClient.chatSingle(msg);
         return BaseResponse.success(chatResponse);
     }
 
@@ -34,20 +34,20 @@ public class BloomZ7BController {
 
     // 连续对话
     @PostMapping("/chats")
-    public BaseResponse<ChatResponse> chatCont(@RequestBody String msg, @RequestBody String chatUid) {
-        ChatResponse response = bloomz7BClient.chatCont(msg, chatUid);
+    public BaseResponse<ChatResponse> chatCont(String msg, String msgUid) {
+        ChatResponse response = bloomz7BClient.chatCont(msg, msgUid);
         return BaseResponse.success(response);
     }
 
     // 流式返回，单次对话
     @PostMapping(value = "/stream/chat", produces = MediaType.TEXT_EVENT_STREAM_VALUE)
-    public Flux<ChatResponse> chatSingleStream(@RequestBody String msg) {
+    public Flux<ChatResponse> chatSingleStream(String msg) {
         return bloomz7BClient.chatSingleOfStream(msg);
     }
 
     // 流式返回，连续对话
     @PostMapping(value = "/stream/chats", produces = MediaType.TEXT_EVENT_STREAM_VALUE)
-    public Flux<ChatResponse> chatContStream(@RequestBody String msg, @RequestBody String msgUid) {
+    public Flux<ChatResponse> chatContStream(String msg, String msgUid) {
         return bloomz7BClient.chatContOfStream(msg, msgUid);
     }
 
@@ -62,8 +62,8 @@ public class BloomZ7BController {
 
     // 连续对话
     @PostMapping("/param/chats")
-    public BaseResponse<ChatResponse> pChatCont(@RequestBody ChatBloomZ7BRequest chatTurbo7BRequest, String chatUid) {
-        ChatResponse response = bloomz7BClient.chatCont(chatTurbo7BRequest, chatUid);
+    public BaseResponse<ChatResponse> pChatCont(@RequestBody ChatBloomZ7BRequest chatTurbo7BRequest) {
+        ChatResponse response = bloomz7BClient.chatCont(chatTurbo7BRequest, chatTurbo7BRequest.getUserId());
         return BaseResponse.success(response);
     }
 
