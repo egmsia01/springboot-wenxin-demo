@@ -1,12 +1,13 @@
 package com.wenxin.demo.common;
 
+import com.gearwenxin.common.ErrorCode;
+import com.wenxin.demo.exception.ResultUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
 import org.springframework.stereotype.Component;
-import org.springframework.util.StopWatch;
 import org.springframework.web.context.request.RequestAttributes;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
@@ -23,7 +24,6 @@ import java.util.concurrent.TimeUnit;
 
 /**
  * 请求响应日志 AOP
- *
  **/
 @Aspect
 @Component
@@ -39,6 +39,8 @@ public class LogInterceptor {
         scheduler.scheduleAtFixedRate(this::clearExpiredRecords, 1, 1, TimeUnit.HOURS);
     }
 
+    private Map<String, String> ipListMap = new ConcurrentHashMap<>();
+
     @Around("execution(* com.wenxin.demo.controller.*.*(..))")
     public Object doInterceptor(ProceedingJoinPoint point) throws Throwable {
         HttpServletRequest httpServletRequest = getHttpServletRequest();
@@ -52,14 +54,26 @@ public class LogInterceptor {
         // 获取请求参数
         Object[] args = point.getArgs();
         String reqParam = "[" + StringUtils.join(args, ", ") + "]";
+        ipListMap.put("120.216.179.82", "blacklist");
         // 输出请求日志
         log.info("request start，id: {}, path: {}, ip: {}, params: {}", requestId, url,
                 httpServletRequest2.getRemoteHost(), reqParam);
+
+        // 检查名单
+        String listType = ipListMap.get(ip);
+        if ("blacklist".equals(listType)) {
+            log.warn("IP {} is in the blacklist.", ip);
+            return ResultUtils.error(ErrorCode.SYSTEM_ERROR, "IP已被加入黑名单！");
+        } else if ("whitelist".equals(listType)) {
+            // 在白名单中处理方式，这里示意直接放行
+            return point.proceed();
+        }
+
         // 检查小时内请求次数
         int hourlyRequestCount = ipHourlyRequestCounts.getOrDefault(ip, 0);
-        if (hourlyRequestCount >= 50) {
+        if (hourlyRequestCount >= 30) {
             log.warn("IP {} has been blacklisted due to excessive requests.", ip);
-            return null; // You can customize the response when an IP is blacklisted.
+            return ResultUtils.error(ErrorCode.SYSTEM_ERROR, "次数过多！");
         }
 
         // 记录请求时间
@@ -71,9 +85,9 @@ public class LogInterceptor {
         requests.removeIf(timestamp -> timestamp < currentTimeMillis - 60000);
 
         // 检查1分钟内请求次数
-        if (requests.size() > 10) {
+        if (requests.size() > 8) {
             log.warn("IP {} has made too many requests in the last minute.", ip);
-            return null; // You can customize the response when an IP is rate limited.
+            return ResultUtils.error(ErrorCode.SYSTEM_ERROR, "次数过快！");
         }
 
         // 执行原方法

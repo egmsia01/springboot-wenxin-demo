@@ -1,10 +1,10 @@
 package com.wenxin.demo.controller;
 
-
 import com.gearwenxin.client.BloomZ7BClient;
-import com.gearwenxin.entity.chatmodel.ChatBloomZ7BRequest;
+import com.gearwenxin.entity.chatmodel.ChatBaseRequest;
 import com.gearwenxin.entity.response.ChatResponse;
 import com.wenxin.demo.common.BaseResponse;
+import com.wenxin.demo.exception.ResultUtils;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
 import reactor.core.publisher.Flux;
@@ -23,20 +23,15 @@ public class BloomZ7BController {
     // 单轮对话
     @PostMapping("/chat")
     public BaseResponse<ChatResponse> chatSingle(String msg) {
-        ChatResponse chatResponse = bloomz7BClient.chatSingle(msg);
-        return BaseResponse.success(chatResponse);
-    }
-
-    @GetMapping
-    public BaseResponse<ChatResponse> get() {
-        return BaseResponse.success(null);
+        ChatResponse response = bloomz7BClient.chatSingle(msg).block();
+        return ResultUtils.success(response);
     }
 
     // 连续对话
     @PostMapping("/chats")
     public BaseResponse<ChatResponse> chatCont(String msg, String msgUid) {
-        ChatResponse response = bloomz7BClient.chatCont(msg, msgUid);
-        return BaseResponse.success(response);
+        ChatResponse response = bloomz7BClient.chatCont(msg, msgUid).block();
+        return ResultUtils.success(response);
     }
 
     // 流式返回，单次对话
@@ -55,28 +50,28 @@ public class BloomZ7BController {
 
     // 模板对话
     @PostMapping("/param/chat")
-    public BaseResponse<ChatResponse> pChatSingle(@RequestBody ChatBloomZ7BRequest chatTurbo7BRequest) {
-        ChatResponse chatResponse = bloomz7BClient.chatSingle(chatTurbo7BRequest);
-        return BaseResponse.success(chatResponse);
+    public BaseResponse<ChatResponse> pChatSingle(@RequestBody ChatBaseRequest chatBaseRequest) {
+        ChatResponse chatResponse = bloomz7BClient.chatSingle(chatBaseRequest).block();
+        return ResultUtils.success(chatResponse);
     }
 
     // 连续对话
     @PostMapping("/param/chats")
-    public BaseResponse<ChatResponse> pChatCont(@RequestBody ChatBloomZ7BRequest chatTurbo7BRequest) {
-        ChatResponse response = bloomz7BClient.chatCont(chatTurbo7BRequest, chatTurbo7BRequest.getUserId());
-        return BaseResponse.success(response);
+    public BaseResponse<ChatResponse> pChatCont(@RequestBody ChatBaseRequest chatBaseRequest) {
+        ChatResponse response = bloomz7BClient.chatCont(chatBaseRequest, chatBaseRequest.getUserId()).block();
+        return ResultUtils.success(response);
     }
 
     // 流式返回，单次对话
     @PostMapping(value = "/param/stream/chat", produces = MediaType.TEXT_EVENT_STREAM_VALUE)
-    public Flux<ChatResponse> pChatSingleStream(@RequestBody ChatBloomZ7BRequest chatTurbo7BRequest) {
-        return bloomz7BClient.chatSingleOfStream(chatTurbo7BRequest);
+    public Flux<ChatResponse> pChatSingleStream(@RequestBody ChatBaseRequest chatBaseRequest) {
+        return bloomz7BClient.chatSingleOfStream(chatBaseRequest);
     }
 
     // 流式返回，连续对话
     @PostMapping(value = "/param/stream/chats", produces = MediaType.TEXT_EVENT_STREAM_VALUE)
-    public Flux<ChatResponse> pChatContStream(@RequestBody ChatBloomZ7BRequest chatTurbo7BRequest, String msgUid) {
-        return bloomz7BClient.chatContOfStream(chatTurbo7BRequest, msgUid);
+    public Flux<ChatResponse> pChatContStream(@RequestBody ChatBaseRequest chatBaseRequest, String msgUid) {
+        return bloomz7BClient.chatContOfStream(chatBaseRequest, msgUid);
     }
 
 }

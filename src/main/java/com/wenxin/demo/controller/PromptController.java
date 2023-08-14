@@ -5,6 +5,7 @@ import com.gearwenxin.client.PromptBotClient;
 import com.gearwenxin.entity.chatmodel.ChatPromptRequest;
 import com.gearwenxin.entity.response.PromptResponse;
 import com.wenxin.demo.common.BaseResponse;
+import com.wenxin.demo.exception.ResultUtils;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -37,9 +38,9 @@ public class PromptController {
         ChatPromptRequest promptRequest = new ChatPromptRequest();
         promptRequest.setId(id);
         promptRequest.setParamMap(map);
-        PromptResponse promptResponse = promptClient.chatPrompt(promptRequest);
+        PromptResponse promptResponse = promptClient.chatPrompt(promptRequest).block();
 
-        return BaseResponse.success(promptResponse);
+        return ResultUtils.success(promptResponse);
     }
 
 }
