@@ -39,15 +39,19 @@ public class ErnieBotController {
     }
 
     // 流式返回，单次对话
-    @PostMapping(value = "/stream/chat", produces = MediaType.TEXT_EVENT_STREAM_VALUE)
-    public Flux<ChatResponse> chatSingleStream(String msg) {
-        return ernieBotClient.chatSingleOfStream(msg);
+    @GetMapping(value = "/stream/chat", produces = MediaType.TEXT_EVENT_STREAM_VALUE)
+    public Flux<String> chatSingleStream(@RequestParam String msg) {
+        Flux<ChatResponse> chatResponse = ernieBotClient.chatSingleOfStream(msg);
+
+        return chatResponse.map(response -> "data: " + response.getResult() + "\n\n");
     }
 
     // 流式返回，连续对话
-    @PostMapping(value = "/stream/chats", produces = MediaType.TEXT_EVENT_STREAM_VALUE)
-    public Flux<ChatResponse> chatContStream(String msg, String msgUid) {
-        return ernieBotClient.chatContOfStream(msg, msgUid);
+    @GetMapping(value = "/stream/chats", produces = MediaType.TEXT_EVENT_STREAM_VALUE)
+    public Flux<String> chatContStream(@RequestParam String msg, @RequestParam String msgUid) {
+        Flux<ChatResponse> chatResponse = ernieBotClient.chatContOfStream(msg, msgUid);
+
+        return chatResponse.map(response -> "data: " + response.getResult() + "\n\n");
     }
 
     //------------------自定义参数------------------//
@@ -64,18 +68,6 @@ public class ErnieBotController {
     public BaseResponse<ChatResponse> pChatCont(@RequestBody ChatErnieRequest chatErnieRequest) {
         ChatResponse response = ernieBotClient.chatCont(chatErnieRequest, chatErnieRequest.getUserId()).block();
         return ResultUtils.success(response);
-    }
-
-    // 流式返回，单次对话
-    @PostMapping(value = "/param/stream/chat", produces = MediaType.TEXT_EVENT_STREAM_VALUE)
-    public Flux<ChatResponse> pChatSingleStream(@RequestBody ChatErnieRequest chatErnieRequest) {
-        return ernieBotClient.chatSingleOfStream(chatErnieRequest);
-    }
-
-    // 流式返回，连续对话
-    @PostMapping(value = "/param/stream/chats", produces = MediaType.TEXT_EVENT_STREAM_VALUE)
-    public Flux<ChatResponse> pChatContStream(@RequestBody ChatErnieRequest chatErnieRequest, String msgUid) {
-        return ernieBotClient.chatContOfStream(chatErnieRequest, msgUid);
     }
 
 }

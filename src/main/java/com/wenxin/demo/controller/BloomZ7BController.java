@@ -35,15 +35,17 @@ public class BloomZ7BController {
     }
 
     // 流式返回，单次对话
-    @PostMapping(value = "/stream/chat", produces = MediaType.TEXT_EVENT_STREAM_VALUE)
-    public Flux<ChatResponse> chatSingleStream(String msg) {
-        return bloomz7BClient.chatSingleOfStream(msg);
+    @GetMapping(value = "/stream/chat", produces = MediaType.TEXT_EVENT_STREAM_VALUE)
+    public Flux<String> chatSingleStream(@RequestParam String msg) {
+        Flux<ChatResponse> chatResponse = bloomz7BClient.chatSingleOfStream(msg);
+        return chatResponse.map(response -> "data: " + response.getResult() + "\n\n");
     }
 
     // 流式返回，连续对话
     @PostMapping(value = "/stream/chats", produces = MediaType.TEXT_EVENT_STREAM_VALUE)
-    public Flux<ChatResponse> chatContStream(String msg, String msgUid) {
-        return bloomz7BClient.chatContOfStream(msg, msgUid);
+    public Flux<String> chatContStream(@RequestParam String msg, @RequestParam String msgUid) {
+        Flux<ChatResponse> chatResponse = bloomz7BClient.chatContOfStream(msg, msgUid);
+        return chatResponse.map(response -> "data: " + response.getResult() + "\n\n");
     }
 
     //------------------自定义参数------------------//
@@ -60,18 +62,6 @@ public class BloomZ7BController {
     public BaseResponse<ChatResponse> pChatCont(@RequestBody ChatBaseRequest chatBaseRequest) {
         ChatResponse response = bloomz7BClient.chatCont(chatBaseRequest, chatBaseRequest.getUserId()).block();
         return ResultUtils.success(response);
-    }
-
-    // 流式返回，单次对话
-    @PostMapping(value = "/param/stream/chat", produces = MediaType.TEXT_EVENT_STREAM_VALUE)
-    public Flux<ChatResponse> pChatSingleStream(@RequestBody ChatBaseRequest chatBaseRequest) {
-        return bloomz7BClient.chatSingleOfStream(chatBaseRequest);
-    }
-
-    // 流式返回，连续对话
-    @PostMapping(value = "/param/stream/chats", produces = MediaType.TEXT_EVENT_STREAM_VALUE)
-    public Flux<ChatResponse> pChatContStream(@RequestBody ChatBaseRequest chatBaseRequest, String msgUid) {
-        return bloomz7BClient.chatContOfStream(chatBaseRequest, msgUid);
     }
 
 }
