@@ -8,6 +8,7 @@ import com.wenxin.demo.exception.ResultUtils;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
 import reactor.core.publisher.Flux;
+import reactor.core.publisher.Mono;
 
 import javax.annotation.Resource;
 
@@ -26,16 +27,14 @@ public class ErnieBotTurboController {
 
     // 单轮对话
     @PostMapping("/chat")
-    public BaseResponse<ChatResponse> chatSingle(String msg) {
-        ChatResponse chatResponse = ernieBotTurboClient.chatSingle(msg).block();
-        return ResultUtils.success(chatResponse);
+    public Mono<ChatResponse> chatSingle(String msg) {
+        return ernieBotTurboClient.chatSingle(msg);
     }
 
     // 连续对话
     @PostMapping("/chats")
-    public BaseResponse<ChatResponse> chatCont(String msg, String msgUid) {
-        ChatResponse response = ernieBotTurboClient.chatCont(msg, msgUid).block();
-        return ResultUtils.success(response);
+    public Mono<ChatResponse> chatCont(String msg, String msgUid) {
+        return ernieBotTurboClient.chatCont(msg, msgUid);
     }
 
     // 流式返回，单次对话
@@ -56,16 +55,14 @@ public class ErnieBotTurboController {
 
     // 模板对话
     @PostMapping("/param/chat")
-    public BaseResponse<ChatResponse> pChatSingle(@RequestBody ChatBaseRequest chatBaseRequest) {
-        ChatResponse chatResponse = ernieBotTurboClient.chatSingle(chatBaseRequest).block();
-        return ResultUtils.success(chatResponse);
+    public Mono<ChatResponse> pChatSingle(@RequestBody ChatBaseRequest chatBaseRequest) {
+        return ernieBotTurboClient.chatSingle(chatBaseRequest);
     }
 
     // 连续对话
     @PostMapping("/param/chats")
-    public BaseResponse<ChatResponse> pChatCont(@RequestBody ChatBaseRequest chatBaseRequest) {
-        ChatResponse response = ernieBotTurboClient.chatCont(chatBaseRequest, chatBaseRequest.getUserId()).block();
-        return ResultUtils.success(response);
+    public Mono<ChatResponse> pChatCont(@RequestBody ChatBaseRequest chatBaseRequest) {
+        return ernieBotTurboClient.chatCont(chatBaseRequest, chatBaseRequest.getUserId());
     }
 
 }

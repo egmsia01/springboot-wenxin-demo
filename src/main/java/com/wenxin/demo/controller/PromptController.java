@@ -9,6 +9,7 @@ import com.wenxin.demo.exception.ResultUtils;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import reactor.core.publisher.Mono;
 
 import javax.annotation.Resource;
 import java.util.HashMap;
@@ -27,7 +28,7 @@ public class PromptController {
 
     // 模板对话
     @PostMapping
-    public BaseResponse<PromptResponse> chatSingle(int id) {
+    public Mono<PromptResponse> chatSingle(int id) {
 
         Map<String, String> map = new HashMap<>();
         map.put("article", "人们都说：“桂林山水甲天下。”我们乘着木船，荡漾在漓江上，来观赏桂林的山水。\n" +
@@ -38,9 +39,8 @@ public class PromptController {
         ChatPromptRequest promptRequest = new ChatPromptRequest();
         promptRequest.setId(id);
         promptRequest.setParamMap(map);
-        PromptResponse promptResponse = promptClient.chatPrompt(promptRequest).block();
 
-        return ResultUtils.success(promptResponse);
+        return promptClient.chatPrompt(promptRequest);
     }
 
 }
