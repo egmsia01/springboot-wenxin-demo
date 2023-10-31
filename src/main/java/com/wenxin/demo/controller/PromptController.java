@@ -6,12 +6,12 @@ import com.gearwenxin.entity.chatmodel.ChatPromptRequest;
 import com.gearwenxin.entity.response.PromptResponse;
 import com.wenxin.demo.common.BaseResponse;
 import com.wenxin.demo.exception.ResultUtils;
+import jakarta.annotation.Resource;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import reactor.core.publisher.Mono;
 
-import javax.annotation.Resource;
 import java.util.HashMap;
 import java.util.Map;
 

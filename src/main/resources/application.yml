@@ -11,7 +11,8 @@ server:
 
 gear:
   wenxin:
-    api-key: Yo1qSiTCYsdjkfhkpQbpfsdfWwPei
-    secret-key: tYsdfM2aGsdfsdfFQGzGkdwBhjkhnjN6
+#    api-key: Yo1qSiTCYsdjkfhkpQbpfsdfWwPei
+#    secret-key: tYsdfM2aGsdfsdfFQGzGkdwBhjkhnjN6
     chat-glm2-6b-url: http://asdhkjashdkjas
     star-coder-url: http://asdhkjashdkjas
+    access-token: 2sdf313.asdfsd21.232dfgher3231231.23resdfgd

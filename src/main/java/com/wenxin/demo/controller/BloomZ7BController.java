@@ -5,12 +5,11 @@ import com.gearwenxin.entity.chatmodel.ChatBaseRequest;
 import com.gearwenxin.entity.response.ChatResponse;
 import com.wenxin.demo.common.BaseResponse;
 import com.wenxin.demo.exception.ResultUtils;
+import jakarta.annotation.Resource;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
-
-import javax.annotation.Resource;
 
 @RestController
 @RequestMapping("/bloomz7b")
