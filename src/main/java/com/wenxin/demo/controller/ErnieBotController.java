@@ -6,6 +6,7 @@ import com.gearwenxin.entity.response.ChatResponse;
 import jakarta.annotation.Resource;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
@@ -40,6 +41,25 @@ public class ErnieBotController {
         Flux<ChatResponse> chatResponse = ernieBot4Client.chatSingleOfStream(msg);
 
         return chatResponse.map(response -> "data: " + response.getResult() + "\n\n");
+    }
+
+    @GetMapping(value = "/stream/chat", produces = MediaType.TEXT_EVENT_STREAM_VALUE)
+    public SseEmitter chatSingleSSE(@RequestParam String msg) {
+        SseEmitter emitter = new SseEmitter();
+
+        ernieBot4Client.chatSingleOfStream(msg)
+                .subscribe(
+                        response -> {
+                            try {
+                                emitter.send(SseEmitter.event().data("data: " + response.getResult() + "\n\n"));
+                            } catch (Exception e) {
+                                emitter.completeWithError(e);
+                            }
+                        },
+                        emitter::completeWithError,
+                        emitter::complete
+                );
+        return emitter;
     }
 
     // 流式返回，连续对话
