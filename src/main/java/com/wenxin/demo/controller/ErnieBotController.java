@@ -43,7 +43,7 @@ public class ErnieBotController {
         return chatResponse.map(response -> "data: " + response.getResult() + "\n\n");
     }
 
-    @GetMapping(value = "/stream/chat", produces = MediaType.TEXT_EVENT_STREAM_VALUE)
+    @GetMapping(value = "/stream/ssechat", produces = MediaType.TEXT_EVENT_STREAM_VALUE)
     public SseEmitter chatSingleSSE(@RequestParam String msg) {
         SseEmitter emitter = new SseEmitter();
 
@@ -51,7 +51,7 @@ public class ErnieBotController {
                 .subscribe(
                         response -> {
                             try {
-                                emitter.send(SseEmitter.event().data("data: " + response.getResult() + "\n\n"));
+                                emitter.send(SseEmitter.event().data(response.getResult()));
                             } catch (Exception e) {
                                 emitter.completeWithError(e);
                             }
