@@ -47,18 +47,13 @@ public class ErnieBotController {
     public SseEmitter chatSingleSSE(@RequestParam String msg) {
         SseEmitter emitter = new SseEmitter();
 
-        ernieBot4Client.chatSingleOfStream(msg)
-                .subscribe(
-                        response -> {
-                            try {
-                                emitter.send(SseEmitter.event().data(response.getResult()));
-                            } catch (Exception e) {
-                                emitter.completeWithError(e);
-                            }
-                        },
-                        emitter::completeWithError,
-                        emitter::complete
-                );
+        ernieBot4Client.chatSingleOfStream(msg).subscribe(response -> {
+            try {
+                emitter.send(SseEmitter.event().data(response.getResult()));
+            } catch (Exception e) {
+                emitter.completeWithError(e);
+            }
+        }, emitter::completeWithError, emitter::complete);
         return emitter;
     }
 
